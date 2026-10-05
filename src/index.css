@@ -1,0 +1,213 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-display: 'Inter Tight', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+
+  /* Surfaces */
+  --color-canvas: #e9e7e1;
+  --color-surface: #ffffff;
+  --color-shell: #f4f3ef;
+
+  /* Ink */
+  --color-ink: #141c16;
+  --color-ink-soft: #3d463e;
+  --color-muted: #79806f;
+
+  /* Brand */
+  --color-forest: #4a7a3f;
+  --color-forest-deep: #2f4a2b;
+  --color-moss: #4f6b32;
+  --color-moss-dark: #3f5628;
+  --color-lime: #cfee52;
+  --color-lime-deep: #b9db3c;
+  --color-bark: #1d2a1c;
+
+  /* Motion — strong curves; the CSS built-ins are too weak */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+@layer base {
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html {
+    /* Lenis drives scrolling; native smooth-scroll would fight it */
+    scroll-behavior: auto;
+  }
+
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.035em;
+    line-height: 1.02;
+    font-weight: 500;
+  }
+
+  ::selection {
+    background: var(--color-lime);
+    color: var(--color-bark);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-forest);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  /* Lenis */
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+  .lenis.lenis-stopped {
+    overflow: hidden;
+  }
+}
+
+@layer components {
+  .shell {
+    background: var(--color-shell);
+    border-radius: 2rem;
+  }
+
+  @media (min-width: 768px) {
+    .shell {
+      border-radius: 2.5rem;
+    }
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.85rem 0.4rem 0.55rem;
+    border-radius: 999px;
+    background: var(--color-surface);
+    border: 1px solid color-mix(in oklab, var(--color-ink) 8%, transparent);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-ink-soft);
+  }
+
+  /* Press feedback — physical, and it scales the label with it */
+  .pressable {
+    transition: transform 160ms var(--ease-out);
+  }
+  .pressable:active {
+    transform: scale(0.97);
+  }
+}
+
+@utility text-balance-tight {
+  text-wrap: balance;
+}
+
+/* ---------------------------------------------------------------- *
+ * Keyframes. CSS animations for anything predetermined and looping —
+ * they run off the main thread and keep time while React is busy.
+ * ---------------------------------------------------------------- */
+
+@keyframes float-card {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(0, -14px, 0);
+  }
+}
+
+@keyframes marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes drift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(3%, -4%, 0) scale(1.08);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.92);
+    opacity: 0.55;
+  }
+  70% {
+    transform: scale(1.45);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.45);
+    opacity: 0;
+  }
+}
+
+@keyframes shimmer {
+  from {
+    transform: translate3d(-120%, 0, 0);
+  }
+  to {
+    transform: translate3d(220%, 0, 0);
+  }
+}
+
+.animate-float-card {
+  animation: float-card 6s var(--ease-in-out) infinite alternate;
+}
+.animate-marquee {
+  animation: marquee 38s linear infinite;
+}
+.animate-drift {
+  animation: drift 24s var(--ease-in-out) infinite;
+}
+.animate-pulse-ring {
+  animation: pulse-ring 2.6s var(--ease-out) infinite;
+}
+
+/* ---------------------------------------------------------------- *
+ * Reduced motion: fewer and gentler, not zero. Position changes and
+ * looping decoration go; opacity and colour transitions stay.
+ * ---------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .animate-float-card,
+  .animate-marquee,
+  .animate-drift,
+  .animate-pulse-ring {
+    animation: none !important;
+  }
+
+  .parallax-layer {
+    transform: none !important;
+  }
+}
